@@ -17,8 +17,7 @@ passport.deserializeUser((id,done)=>{
 })
 
 passport.use(
-    new GoogleStrategy(
-    {
+    new GoogleStrategy({
         clientID: keys.googleClientID,
         clientSecret: keys.googleClientSecret,
         callbackURL : '/auth/google/callback',
@@ -29,16 +28,16 @@ passport.use(
         .then((existingUser)=>{
             if(existingUser){
                 console.log("User Already Exist")
-                done(null,existingUser);
-             }
-            else{
-                new User({googleId : profile.id})
-                .save()
-                .then(newUser => {
-                    done(null,newUser);
-                });
+                done(null,existingUser)
             }
-        })
+            else
+            {
+                new User({googleId : profile.id}).save()
+                .then(user=>{
+                    done(null,user);
+                }).catch(console.error())
+            }
+        }).catch(console.error())
         
     })
 );
